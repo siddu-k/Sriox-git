@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sriox Platform</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">Sriox Platform</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="logout-link">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1 class="mb-4">Dashboard</h1>
+        
+        <div id="loading-indicator" class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading your dashboard...</p>
+        </div>
+        
+        <div id="dashboard-content" class="d-none">
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card dashboard-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Websites</h5>
+                            <p class="card-text">
+                                <span id="websites-count" class="resource-count">0</span> / <span class="resource-limit">2</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card dashboard-card">
+                        <div class="card-body">
+                            <h5 class="card-title">Redirects</h5>
+                            <p class="card-text">
+                                <span id="redirects-count" class="resource-count">0</span> / <span class="resource-limit">2</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card dashboard-card">
+                        <div class="card-body">
+                            <h5 class="card-title">GitHub Mappings</h5>
+                            <p class="card-text">
+                                <span id="github-mappings-count" class="resource-count">0</span> / <span class="resource-limit">2</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Websites Section -->
+            <section id="websites-section" class="mb-5">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2>Your Websites</h2>
+                    <button id="add-website-btn" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Website</button>
+                </div>
+                <div id="website-limit-reached" class="alert alert-warning d-none">
+                    <i class="bi bi-exclamation-triangle"></i> You've reached the limit of 2 websites. Contact admin to add more.
+                </div>
+                <div id="websites-table-container">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Subdomain</th>
+                                <th>URL</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="websites-table-body">
+                            <!-- Websites will be added here dynamically -->
+                        </tbody>
+                    </table>
+                    <div id="no-websites-message" class="text-center py-4 d-none">
+                        <p class="text-muted">You haven't uploaded any websites yet.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Redirects Section -->
+            <section id="redirects-section" class="mb-5">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2>Your Redirects</h2>
+                    <button id="add-redirect-btn" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Redirect</button>
+                </div>
+                <div id="redirect-limit-reached" class="alert alert-warning d-none">
+                    <i class="bi bi-exclamation-triangle"></i> You've reached the limit of 2 redirects. Contact admin to add more.
+                </div>
+                <div id="redirects-table-container">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Redirect URL</th>
+                                <th>Target URL</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="redirects-table-body">
+                            <!-- Redirects will be added here dynamically -->
+                        </tbody>
+                    </table>
+                    <div id="no-redirects-message" class="text-center py-4 d-none">
+                        <p class="text-muted">You haven't created any redirects yet.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GitHub Mappings Section -->
+            <section id="github-mappings-section" class="mb-5">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2>Your GitHub Mappings</h2>
+                    <button id="add-github-mapping-btn" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add GitHub Mapping</button>
+                </div>
+                <div id="github-mapping-limit-reached" class="alert alert-warning d-none">
+                    <i class="bi bi-exclamation-triangle"></i> You've reached the limit of 2 GitHub mappings. Contact admin to add more.
+                </div>
+                <div id="github-mappings-table-container">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Subdomain</th>
+                                <th>GitHub Username</th>
+                                <th>Repository</th>
+                                <th>URL</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="github-mappings-table-body">
+                            <!-- GitHub mappings will be added here dynamically -->
+                        </tbody>
+                    </table>
+                    <div id="no-github-mappings-message" class="text-center py-4 d-none">
+                        <p class="text-muted">You haven't created any GitHub mappings yet.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Website Upload Modal -->
+    <div class="modal fade" id="website-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload Website</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="website-form">
+                        <div class="mb-3">
+                            <label for="website-subdomain" class="form-label">Subdomain</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="website-subdomain" required>
+                                <span class="input-group-text">.sriox.com</span>
+                            </div>
+                            <div class="form-text">Use only letters, numbers, and hyphens.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="website-zip" class="form-label">ZIP File (Max 35MB)</label>
+                            <input type="file" class="form-control" id="website-zip" accept=".zip" required>
+                        </div>
+                        <div id="website-modal-error" class="alert alert-danger d-none"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="website-submit-btn">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Redirect Modal -->
+    <div class="modal fade" id="redirect-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create Redirect</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="redirect-form">
+                        <div class="mb-3">
+                            <label for="redirect-name" class="form-label">Redirect Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text">sriox.com/</span>
+                                <input type="text" class="form-control" id="redirect-name" required>
+                            </div>
+                            <div class="form-text">Use only letters, numbers, and hyphens.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="redirect-target-url" class="form-label">Target URL</label>
+                            <input type="url" class="form-control" id="redirect-target-url" required placeholder="https://example.com">
+                        </div>
+                        <div id="redirect-modal-error" class="alert alert-danger d-none"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="redirect-submit-btn">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GitHub Mapping Modal -->
+    <div class="modal fade" id="github-mapping-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create GitHub Mapping</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="github-mapping-form">
+                        <div class="mb-3">
+                            <label for="github-subdomain" class="form-label">Subdomain</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="github-subdomain" required>
+                                <span class="input-group-text">.sriox.com</span>
+                            </div>
+                            <div class="form-text">Use only letters, numbers, and hyphens.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="github-username" class="form-label">GitHub Username</label>
+                            <input type="text" class="form-control" id="github-username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="github-repository" class="form-label">Repository Name</label>
+                            <input type="text" class="form-control" id="github-repository" required>
+                        </div>
+                        <div id="github-mapping-modal-error" class="alert alert-danger d-none"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="github-mapping-submit-btn">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Website Modal -->
+    <div class="modal fade" id="edit-website-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Website</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-website-form">
+                        <input type="hidden" id="edit-website-id">
+                        <div class="mb-3">
+                            <label for="edit-website-subdomain" class="form-label">Subdomain</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="edit-website-subdomain" required>
+                                <span class="input-group-text">.sriox.com</span>
+                            </div>
+                            <div class="form-text">Use only letters, numbers, and hyphens.</div>
+                        </div>
+                        <div id="edit-website-modal-error" class="alert alert-danger d-none"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="edit-website-submit-btn">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Redirect Modal -->
+    <div class="modal fade" id="edit-redirect-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Redirect</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-redirect-form">
+                        <input type="hidden" id="edit-redirect-id">
+                        <div class="mb-3">
+                            <label for="edit-redirect-name" class="form-label">Redirect Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text">sriox.com/</span>
+                                <input type="text" class="form-control" id="edit-redirect-name" required>
+                            </div>
+                            <div class="form-text">Use only letters, numbers, and hyphens.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-redirect-target-url" class="form-label">Target URL</label>
+                            <input type="url" class="form-control" id="edit-redirect-target-url" required placeholder="https://example.com">
+                        </div>
+                        <div id="edit-redirect-modal-error" class="alert alert-danger d-none"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="edit-redirect-submit-btn">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit GitHub Mapping Modal -->
+    <div class="modal fade" id="edit-github-mapping-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit GitHub Mapping</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-github-mapping-form">
+                        <input type="hidden" id="edit-github-mapping-id">
+                        <div class="mb-3">
+                            <label for="edit-github-subdomain" class="form-label">Subdomain</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="edit-github-subdomain" required>
+                                <span class="input-group-text">.sriox.com</span>
+                            </div>
+                            <div class="form-text">Use only letters, numbers, and hyphens.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-github-username" class="form-label">GitHub Username</label>
+                            <input type="text" class="form-control" id="edit-github-username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-github-repository" class="form-label">Repository Name</label>
+                            <input type="text" class="form-control" id="edit-github-repository" required>
+                        </div>
+                        <div id="edit-github-mapping-modal-error" class="alert alert-danger d-none"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="edit-github-mapping-submit-btn">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirm-delete-modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this item? This action cannot be undone.</p>
+                    <input type="hidden" id="delete-item-type">
+                    <input type="hidden" id="delete-item-id">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/scripts.js"></script>
+</body>
+</html>

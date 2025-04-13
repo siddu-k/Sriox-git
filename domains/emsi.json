@@ -1,8 +1,0 @@
-{
-  "owner": {
-    "username": "emsi"
-  },
-  "record": {
-    "NS": ["braelyn.ns.cloudflare.com", "ed.ns.cloudflare.com"]
-  }
-}
