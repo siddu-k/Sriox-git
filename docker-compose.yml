@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: sriox_postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-sriox}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-sriox_password}
+      - POSTGRES_DB=${POSTGRES_DB:-sriox}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "55432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sriox"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: sriox_app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-sriox}:${POSTGRES_PASSWORD:-sriox_password}@postgres:5432/${POSTGRES_DB:-sriox}
+      - SECRET_KEY=${SECRET_KEY:-supersecretkey}
+      - DOMAIN_NAME=${DOMAIN_NAME:-sriox.com}
+      - SERVER_IP=${SERVER_IP:-127.0.0.1}
+      - CLOUDFLARE_EMAIL=${CLOUDFLARE_EMAIL}
+      - CLOUDFLARE_API_KEY=${CLOUDFLARE_API_KEY}
+      - CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/static_sites:/app/backend/static_sites
+      - ./backend/templates/redirects:/app/backend/templates/redirects
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
